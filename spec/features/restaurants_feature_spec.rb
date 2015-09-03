@@ -19,14 +19,29 @@ feature 'restaurants' do
       expect(page).not_to have_content('No restaurants yet')
     end
   end
+  before do
+    visit('/')
+    click_link('Sign up')
+    fill_in('Email', with: 'test@example.com')
+    fill_in('Password', with: 'testtest')
+    fill_in('Password confirmation', with: 'testtest')
+    click_button('Sign up')
+  end
   context 'creating restaurants' do
-    scenario 'prompts user to fill out a form, then displays the new restaurant' do
-      visit '/restaurants'
-      click_link 'Add a restaurant'
-      fill_in 'Name', with: 'KFC'
-      click_button 'Create Restaurant'
-      expect(page).to have_content 'KFC'
-      expect(current_path).to eq '/restaurants'
+    
+    context 'user should be signed in to create restaurants' do
+      scenario 'after signing in then prompts user to fill out a form, then displays the new restaurant' do
+        click_link 'Add a restaurant'
+        fill_in 'Name', with: 'KFC'
+        click_button 'Create Restaurant'
+        expect(page).to have_content 'KFC'
+        expect(current_path).to eq '/restaurants'
+      end
+      scenario 'user not signed in' do
+        click_link 'Sign out'
+        click_link 'Add a restaurant'
+        expect(page).to have_content 'You need to sign in or sign up before continuing.'
+      end
     end
     context 'an invalid restaurant' do
       it 'does not let you submit a name that is too short' do
