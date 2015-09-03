@@ -7,10 +7,10 @@ class User < ActiveRecord::Base
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
+      user.email = auth.info.email || "#{auth.uid}@facebook.com"
       user.password = Devise.friendly_token[0,20]
-      user.name = auth.info.name   # assuming the user model has a name
-      user.image = auth.info.image # assuming the user model has an image
+      # user.name = auth.info.name   # assuming the user model has a name
+      # user.image = auth.info.image # assuming the user model has an image
     end
   end
 
@@ -18,8 +18,6 @@ class User < ActiveRecord::Base
     super.tap do |user|
       if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
         user.email = data["email"] if user.email.blank?
-      else
-        self.cancel_user_registration
       end
     end
   end

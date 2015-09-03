@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   resources :restaurants do
     resources :reviews
   end
+
+  devise_scope :user do
+  delete 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session_path
+  end
+
+  # devise_scope :user do
+  # delete 'sign_up', :to => 'devise/registrations#cancel', :as => :cancel_user_registration_path
+  # end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
